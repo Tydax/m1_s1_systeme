@@ -28,14 +28,16 @@ struct ctx_s {
 /* 
  * Saves the context inside the specified struct, and calls the specified function
  * ctx_s: the struct where to save the context
- * f: the functon to call
- * arg: the argument
+ * f: the function to call
+ * arg: the argument to specify to the function
  */
 int try(struct ctx_s * pctx, func_t * f, int arg);
 
 
 /*
  * Restores the context saved into the struct.
+ * ctx_s: the struct where the context to restore is saved
+ * r: the value to return once the context is restored
  */
 int throw(struct ctx_s * pctx, int r);
 

@@ -1,7 +1,11 @@
 #include <stdio.h>
 
+/*
+ * Displays the current values of ebp and esp.
+ * func_name: the string to display before the values.
+ */
 void display_stack(char* func_name) {
-    int ebp, esp;
+    unsigned int ebp, esp;
 
     /* Save the ebp and esp values inside the specified variables above */
     asm("movl %%ebp, %0"
@@ -10,45 +14,54 @@ void display_stack(char* func_name) {
       : "=r" (ebp),
         "=r" (esp));
     
-    printf("%s:\nebp: %d\nesp: %d\n", func_name, ebp, esp);
+    printf("%s:\n\tebp: %u, esp: %u", func_name, ebp, esp);
 }
 
-void f() {
+/*
+ * Displays the specified j times.
+ * string: the string to display
+ * j: number of times
+ */
+void f(char * string, int j) {
     printf("\n/* Appel à f */\n");
     int i;
+    char s;
 
     display_stack("f");
+    /* Sorry for the ugly casts... */
+    printf("\n\t&firstvar: %u, &lastvar: %u\n\t&firstparam: %u, &lastparam: %u\n",
+            (int) &i, (int) &s, (int) &j, (int) &string);
 
-    for (i = 0; i < 5; ++i) {
-        display_stack("f");
-        printf("%d\n", i);
+    for (i = 0; i < j; ++i) {
+        printf("%s %d ", string, i);
     }
-
-    display_stack("f");
+    printf("\n");
 }
 
-void g() {
+/*
+ * Calls the f function with the specified parameters.
+ */
+void g(char * string, int j) {
     printf("\n/* Appel à g */\n");
-    display_stack("g");
+    int i;
+    char s;
 
-    f();
-
     display_stack("g");
+    printf("\n\t&firstvar: %u, &lastvar: %u\n\t&firstparam: %u, &lastparam: %u\n",
+        (int) &i, (int) &s, (int) &j, (int) &string);
+    f(string, j);
 }
 
-int main(int argc, int * argv) {
-    printf("\n/* Appel à main */\n");
+int main() {
+    printf("/* Appel à main */\n");
 
 
     display_stack("main");
+    printf("\n");
 
-    f();
+    f("f", 3);
 
-    display_stack("main");
-
-    g();
-
-    display_stack("main");
+    g("f inside g", 2);
 
     return 0;
 }

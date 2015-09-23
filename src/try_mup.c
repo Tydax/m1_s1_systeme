@@ -17,10 +17,11 @@ static int mul(int depth) {
         case 1 :
             if (i) {
                 nb = i * mul(depth + 1);
-                printf("suus\n");
+                /* Keeps track of the call stack, this won't be displayed if throw function is called */
+                printf("Climbing up the recursive call stack... (depth: %d)\n", depth);
                 return nb;
             } else {
-                /* Restores context when getting a 0 */
+                /* Restores context when getting a 0 so that we don't have to climb up the recursive call stack*/
                 return throw(ctx, 0);
             }
     }
