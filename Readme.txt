@@ -15,3 +15,5 @@ Tristan CAMUS
 
 Le makefile peut générer un programme :
     * make pingpong.out
+
+Pour utiliser le makefile, se placer dans le dossier /src.

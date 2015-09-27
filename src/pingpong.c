@@ -33,7 +33,7 @@ int main(int argc, char ** argv) {
 }
 
 void f_ping(void * args) {
-    /*while(1) {*/
+    while(1) {
         printf("A");
         switch_to_ctx(ctx_pong);
         
@@ -42,11 +42,11 @@ void f_ping(void * args) {
 
         printf("C");
         switch_to_ctx(ctx_pong);
-    /*}*/
+    }
 }
 
 void f_pong(void * args) {
-    /*while(1) {*/
+    while(1) {
         printf("1");
         switch_to_ctx(ctx_ping);
         
@@ -55,5 +55,5 @@ void f_pong(void * args) {
 
         printf("3");
         switch_to_ctx(ctx_ping);
-    /*}*/
+    }
 }

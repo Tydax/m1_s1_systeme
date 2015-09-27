@@ -39,6 +39,10 @@ void switch_to_ctx(struct ctx_s * ctx) {
     /* Current context stored as a global variable */
     static struct ctx_s * ctx_crt = NULL;
 
+    assert(ctx);
+    assert(ctx->ctx_magic == MAGIC_VALUE);
+    assert(ctx->ctx_state == INITIALIZED || ctx->ctx_state == ACTIVABLE);
+
     /* If leaving a context, saving it in the global variable */
     if (ctx_crt != NULL) {
         asm("mov %%ebp, %0"
@@ -52,9 +56,9 @@ void switch_to_ctx(struct ctx_s * ctx) {
     ctx_crt = ctx;
 
     /* Restoring the context */
-    asm("mov %%ebp, %0"
+    asm("mov %0, %%ebp"
         "\n\t"
-        "mov %%esp, %1"
+        "mov %1, %%esp"
       :
       : "r" (ctx_crt->ctx_ebp),
         "r" (ctx_crt->ctx_esp));
