@@ -10,7 +10,10 @@ DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 _OBJ = ctx.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-$(ODIR)/%.o: %.c $(DEPS)
+odir:
+	mkdir -p $(ODIR)
+
+$(ODIR)/%.o: %.c $(DEPS) odir
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 pingpong.out: $(OBJ) pingpong.c

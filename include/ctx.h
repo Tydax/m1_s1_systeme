@@ -10,11 +10,6 @@
  *
  */
 
-/* Loop of contexts */
-static struct ctx_s * loop = NULL;
-/* Current context stored as a global variable */
-static struct ctx_s * ctx_crt = NULL;
-
 /*
  * Magic value used to make sure the structure has been initialized before trying
  * to switch to that context.
@@ -35,6 +30,7 @@ enum ctx_state_e {
 struct ctx_s {
     void *              ctx_esp;
     void *              ctx_ebp;
+    void *              ctx_stack;
     int                 ctx_magic;
     enum ctx_state_e    ctx_state;
     func_t *            ctx_f;
@@ -59,7 +55,7 @@ int create_ctx(int stack_size, func_t f, void * args);
  * f: the function associated with that context
  * args: the argument of the function
  */
-static int init_ctx(struct ctx_s * ctx, int stack_size, func_t f, void * args);
+int init_ctx(struct ctx_s * ctx, int stack_size, func_t f, void * args);
 
 /*
  * Switches to the next context in the loop. Calls switch_to_ctx.
@@ -70,7 +66,7 @@ void yield();
  * Switches to the specified context, saving the previous context in a global variable.
  * ctx: the context to switch to
  */
-static void switch_to_ctx(struct ctx_s * ctx);
+void switch_to(struct ctx_s * ctx);
 
 
 #endif

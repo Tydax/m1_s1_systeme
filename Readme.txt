@@ -1,6 +1,6 @@
 /* Architecture et conception des Systèmes d'Exploitation */
 
-/* TP n°2 */
+/* TP n°3 */
 
 Armand BOUR
 Tristan CAMUS
