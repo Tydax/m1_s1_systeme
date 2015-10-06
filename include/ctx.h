@@ -69,4 +69,9 @@ void yield();
 void switch_to(struct ctx_s * ctx);
 
 
+/*
+ * Sets up the interruption manager. Uses the hw library.
+ */
+void start_sched();
+
 #endif

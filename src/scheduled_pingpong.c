@@ -16,7 +16,7 @@ int main(int argc, char ** argv) {
         exit(EXIT_FAILURE);
     }
 
-    yield();
+    start_sched();
 
     exit(EXIT_SUCCESS);
 }
@@ -24,38 +24,23 @@ int main(int argc, char ** argv) {
 void f_ping(void * args) {
     while(1) {
         printf("A");
-        yield();
-
         printf("B");
-        yield();
-
         printf("C");
-        yield();
     }
 }
 
 void f_pong(void * args) {
     while(1) {
         printf("1");
-        yield();
-
         printf("2");
-        yield();
-
         printf("3");
-        yield();
     }
 }
 
 void f_pung(void * args) {
     while(1) {
         printf("!");
-        yield();
-
         printf("@");
-        yield();
-
         printf("#");
-        yield();
     }
 }
