@@ -12,8 +12,10 @@ Tristan CAMUS
     * makefile
     * ctx.c
     * pingpong.c
+    * scheduled_pingpong.c
 
-Le makefile peut générer un programme :
+Le makefile peut générer deux programmes :
     * make pingpong.out
+    * make scheduled_pingpong.out
 
 Pour utiliser le makefile, se placer dans le dossier /src.

@@ -22,7 +22,8 @@ int main(int argc, char ** argv) {
 }
 
 void f_ping(void * args) {
-    while(1) {
+    int i;
+    for (i = 0; i < 5; ++i) {
         printf("A");
         yield();
 
@@ -35,7 +36,8 @@ void f_ping(void * args) {
 }
 
 void f_pong(void * args) {
-    while(1) {
+    int i;
+    for (i = 0; i < 3; ++i) {
         printf("1");
         yield();
 
@@ -48,7 +50,8 @@ void f_pong(void * args) {
 }
 
 void f_pung(void * args) {
-    while(1) {
+    int i;
+    for (i = 0; i < 7; ++i) {
         printf("!");
         yield();
 

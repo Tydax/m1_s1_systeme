@@ -81,11 +81,11 @@ void yield() {
         switch_to(loop);
     } else {
         /* Free the terminated contexts */
+        irq_disable();
         while (ctx_current->ctx_next->ctx_state == TERMINATED && ctx_current->ctx_next != ctx_current) {
             free(ctx_current->ctx_next->ctx_stack);
             tmp = ctx_current->ctx_next->ctx_next;
             free(ctx_current->ctx_next);
-            assert(tmp != NULL);
             ctx_current->ctx_next = tmp;
         }
 
@@ -93,6 +93,7 @@ void yield() {
         if (ctx_current->ctx_next->ctx_state == TERMINATED) {
             exit(EXIT_SUCCESS);
         }
+        irq_enable();
         switch_to(ctx_current->ctx_next);
     }
 }
@@ -133,6 +134,8 @@ void switch_to(struct ctx_s * ctx) {
         ctx_current->ctx_f(ctx_current->ctx_f_args);
         /* Change the state */
         ctx_current->ctx_state = TERMINATED;
+        /* Change the context to the next one */
+        yield();
     }
 
 }
