@@ -6,9 +6,9 @@
 #include <hw.h>
 
 /* Loop of contexts */
-static struct ctx_s * loop = NULL;
+struct ctx_s * loop = NULL;
 /* Current context stored as a global variable */
-static struct ctx_s * ctx_current = NULL;
+struct ctx_s * ctx_current = NULL;
 
 /*
  * Allocates and initialises a new context in the specified pointer ctx, and initialises it (calls init_ctx).
@@ -93,7 +93,6 @@ void yield() {
         if (ctx_current->ctx_next->ctx_state == TERMINATED) { // ou blocked
             exit(EXIT_SUCCESS);
         }
-        irq_enable();
         switch_to(ctx_current->ctx_next);
     }
 }

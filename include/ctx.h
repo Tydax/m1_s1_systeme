@@ -23,7 +23,8 @@ typedef void func_t(void *);
 enum ctx_state_e {
     INITIALIZED,
     ACTIVABLE,
-    TERMINATED
+    TERMINATED,
+    BLOCKED
 };
 
 /* Structure describing a saved context. */
@@ -36,6 +37,7 @@ struct ctx_s {
     func_t *            ctx_f;
     void *              ctx_f_args;
     struct ctx_s *      ctx_next;
+    struct ctx_s *      ctx_sem_next;
 };
 
 
