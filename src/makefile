@@ -4,10 +4,10 @@ ODIR=obj
 CC=gcc
 CFLAGS=-I$(IDIR) -m32 -Wall -g
 
-_DEPS = ctx.h hw.h
+_DEPS = ctx.h hw.h sem.h object.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = ctx.o hw.o
+_OBJ = ctx.o hw.o sem.o object.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 odir:
@@ -16,10 +16,7 @@ odir:
 $(ODIR)/%.o: %.c $(DEPS) odir
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-pingpong.out: $(OBJ) pingpong.c
-	$(CC) -o $@ $^ $(CFLAGS)
-
-scheduled_pingpong.out: $(OBJ) scheduled_pingpong.c
+prodcons.out: $(OBJ) prodcons.c
 	$(CC) -o $@ $^ $(CFLAGS)
 
 # Clean command

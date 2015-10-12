@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <object.>
+#include <object.h>
 
 /* Buffer containing all the object */
-static object_t[MAX] buffer;
+static object_t buffer[MAX];
 
 /* Index */
 static int i = 0;
@@ -28,6 +28,6 @@ object_t take_object() {
 }
 
 /* Uses the specified object. */
-use_object(object_t obj) {
-    
+void use_object(object_t obj) {
+    printf("Object n°%d consommé\n", obj);
 }

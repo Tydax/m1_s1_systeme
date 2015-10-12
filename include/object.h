@@ -17,6 +17,6 @@ void store_object(object_t obj);
 object_t take_object();
 
 /* Uses the specified object. */
-use_object(object_t obj)
+void use_object(object_t obj);
 
-#ifndef
+#endif

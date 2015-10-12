@@ -1,6 +1,8 @@
 #ifndef __CTX_H__
 #define __CTX_H__
 
+#include <stdlib.h>
+
 /*
  * ctx.h
  *
@@ -40,6 +42,10 @@ struct ctx_s {
     struct ctx_s *      ctx_sem_next;
 };
 
+/* Loop of contexts */
+struct ctx_s * loop;
+/* Current context stored as a global variable */
+struct ctx_s * ctx_current;
 
 /*
  * Allocates and initialises a new context in the specified pointer ctx, and initialises it (calls init_ctx).
