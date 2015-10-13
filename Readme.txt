@@ -7,15 +7,19 @@ Tristan CAMUS
 
 /include :
     * ctx.h
+    * hw.h
+    * object.h
+    * sem.h
 
 /src :
     * makefile
     * ctx.c
-    * pingpong.c
-    * scheduled_pingpong.c
+    * hw.c
+    * object.c
+    * sem.c
+    * prodcons.c
 
 Le makefile peut générer deux programmes :
-    * make pingpong.out
-    * make scheduled_pingpong.out
+    * make prodcons.out
 
 Pour utiliser le makefile, se placer dans le dossier /src.
