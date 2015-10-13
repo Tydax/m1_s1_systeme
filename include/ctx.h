@@ -43,9 +43,9 @@ struct ctx_s {
 };
 
 /* Loop of contexts */
-struct ctx_s * loop;
+extern struct ctx_s * loop;
 /* Current context stored as a global variable */
-struct ctx_s * ctx_current;
+extern struct ctx_s * ctx_current;
 
 /*
  * Allocates and initialises a new context in the specified pointer ctx, and initialises it (calls init_ctx).

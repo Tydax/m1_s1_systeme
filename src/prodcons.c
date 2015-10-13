@@ -15,6 +15,7 @@ void producer() {
 
     while(1) {
         object = produce_object();
+        printf("Object n°%d produced\n", object);
         sem_down(&empty);
         sem_down(&mutex);
         store_object(object);
@@ -38,8 +39,6 @@ void consumer() {
 
 int main(int argc, char const *argv[])
 {
-    srand(time(NULL));
-
     /* Semaphores initialisation */
     sem_init(&mutex, 1);
     sem_init(&empty, MAX);

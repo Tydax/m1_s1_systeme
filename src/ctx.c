@@ -6,9 +6,9 @@
 #include <hw.h>
 
 /* Loop of contexts */
-loop = NULL;
+struct ctx_s * loop = NULL;
 /* Current context stored as a global variable */
-ctx_current = NULL;
+struct ctx_s * ctx_current = NULL;
 
 
 /*
