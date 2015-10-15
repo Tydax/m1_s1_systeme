@@ -1,14 +1,17 @@
 IDIR=../include
 ODIR=obj
+LIBDIR  = $(ROOTDIR)/lib
 
 CC=gcc
 CFLAGS=-I$(IDIR) -m32 -Wall -g
 
-_DEPS = ctx.h hw.h sem.h object.h
+_DEPS = hardware.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = ctx.o hw.o sem.o object.o
+_OBJ = dmps.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
+
+LIBS    = -L$(LIBDIR) -lhardware
 
 odir:
 	mkdir -p $(ODIR)
@@ -16,8 +19,8 @@ odir:
 $(ODIR)/%.o: %.c $(DEPS) odir
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-prodcons.out: $(OBJ) prodcons.c
-	$(CC) -o $@ $^ $(CFLAGS)
+dmps.out: dmps.o
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 # Clean command
 
