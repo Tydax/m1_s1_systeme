@@ -1,17 +1,17 @@
 IDIR=../include
 ODIR=obj
-LIBDIR  = $(ROOTDIR)/lib
+LIBDIR = ../lib
 
 CC=gcc
-CFLAGS=-I$(IDIR) -m32 -Wall -g
+CFLAGS=-I$(IDIR) -ansi -pedantic -m32 -Wall -g -pthread
 
-_DEPS = hardware.h
+_DEPS = hardware.h driver.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = dmps.o
+_OBJ = driver.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-LIBS    = -L$(LIBDIR) -lhardware
+LIBS = -L$(LIBDIR) -lhardware
 
 odir:
 	mkdir -p $(ODIR)
@@ -19,7 +19,10 @@ odir:
 $(ODIR)/%.o: %.c $(DEPS) odir
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-dmps.out: dmps.o
+dmps.out: $(OBJ) dmps.c
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+
+frmt.out: $(OBJ) frmt.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 # Clean command
