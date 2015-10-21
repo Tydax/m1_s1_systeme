@@ -1,5 +1,5 @@
-IDIR=../include
-ODIR=obj
+IDIR = ../include
+ODIR = obj
 LIBDIR = ../lib
 
 CC=gcc
@@ -13,10 +13,11 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 LIBS = -L$(LIBDIR) -lhardware
 
-dmps.out: $(OBJ) dmps.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+OUT = dmps.out frmt.out
 
-frmt.out: $(OBJ) frmt.c
+all: $(OUT)
+
+%.out: $(OBJ) %.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 odir:
