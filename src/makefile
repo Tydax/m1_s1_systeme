@@ -13,17 +13,17 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 LIBS = -L$(LIBDIR) -lhardware
 
-odir:
-	mkdir -p $(ODIR)
-
-$(ODIR)/%.o: %.c $(DEPS) odir
-	$(CC) -c -o $@ $< $(CFLAGS)
-
 dmps.out: $(OBJ) dmps.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 frmt.out: $(OBJ) frmt.c
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+
+odir:
+	mkdir -p $(ODIR)
+
+$(ODIR)/%.o: %.c $(DEPS) odir
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 # Clean command
 
