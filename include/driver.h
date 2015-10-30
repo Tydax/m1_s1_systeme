@@ -17,7 +17,7 @@
  * Inits the driver.
  * Returns 0 if the driver was successfully initialised.
  */
-int  init_driver();
+int init_driver();
 
 /*
  * Reads one sector at the specified cylinder and sector from the hard drive,
@@ -28,6 +28,7 @@ int  init_driver();
  * buffer: the buffer to store the read data
  */
 void read_sector(unsigned int cylinder, unsigned int sector, unsigned char * buffer);
+
 /*
  * Writes the data stored inside the buffer to the specified sector and cylinder.
  *

@@ -56,7 +56,7 @@ void save_mbr() {
 }
 
 /*
- * Converts the volume number and block to cylinder and sector values.
+ * Converts the volume and block numbers to cylinder and sector values.
  *
  * vol: the volume number
  * block: the block number
@@ -81,10 +81,19 @@ void volume_to_sector(unsigned int vol, unsigned int block, unsigned int * cyl
  * the buffer.
  *
  * vol: the volume to read
- * nblock: the number of blocks to read
+ * nblock: the index of the block to read
  * buffer: the buffer to copy the data to
  */ 
-void read_block(unsigned int vol, unsigned int nblock, unsigned char * buffer);
+void read_block(unsigned int vol, unsigned int nblock, unsigned char * buffer) {
+    int cyl, sect;
+
+    /* Checks if initialised */
+    assert(mbr != NULL);
+    assert(mbr->MBR_MAGIC_VALUE == MBR_MAGIC_VALUE);
+
+    volume_to_sector(vol, nblock, &cyl, &sect);
+    read_sector(cyl, sect, buffer);
+}
 
 /*
  * Writes the data stored inside the buffer to the specified number of blocks
@@ -94,11 +103,31 @@ void read_block(unsigned int vol, unsigned int nblock, unsigned char * buffer);
  * nblock: the number of blocks to write
  * buffer: the data to write
  */
-void write_block(unsigned int vol, unsigned int nblock, unsigned char * buffer);
+void write_block(unsigned int vol, unsigned int nblock, unsigned char * buffer) {
+    int cyl, sect;
+
+    /* Checks if initialised */
+    assert(mbr != NULL);
+    assert(mbr->MBR_MAGIC_VALUE == MBR_MAGIC_VALUE);
+
+    volume_to_sector(vol, nblock, &cyl, &sect);
+    write_sector(cyl, sect, buffer);
+}
 
 /*
  * Formats the specified volume.
  *
  * vol: the volume to format
  */
-void format_vol(unsigned int vol);
+void format_vol(unsigned int vol) {
+    int cyl, sect, max_blocks;
+
+
+    /* Checks if initialised */
+    assert(mbr != NULL);
+    assert(mbr->MBR_MAGIC_VALUE == MBR_MAGIC_VALUE);
+
+    volume_to_sector(vol, 0, &cyl, &sect);
+    max_blocks = mbr->mbr_vols[vol].vol_nb_blocks;
+    format_sector(cyl, sect, max_blocks, 0);
+}

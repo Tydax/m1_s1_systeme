@@ -5,15 +5,15 @@ LIBDIR = ../lib
 CC=gcc
 CFLAGS=-I$(IDIR) -ansi -pedantic -m32 -Wall -g -pthread
 
-_DEPS = hardware.h driver.h
+_DEPS = hardware.h driver.h mbr.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = driver.o
+_OBJ = driver.o mbr.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 LIBS = -L$(LIBDIR) -lhardware
 
-OUT = dmps.out frmt.out
+OUT = mkvol.out frmt.out
 
 all: $(OUT)
 

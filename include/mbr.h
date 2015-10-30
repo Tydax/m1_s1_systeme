@@ -32,7 +32,7 @@ struct vol_s {
  */
 struct mbr_s {
     unsigned int    mbr_nb_vols;      /* Number of volumes contained on the disk */
-    unsigned int    mbr_volumes[MBR_MAX_NB_VOL]; /* The stored volumes */
+    struct vol_s    mbr_volumes[MBR_MAX_NB_VOL]; /* The stored volumes */
     int             mbr_magic; /* Magic number to check initialisation */
 };
 
