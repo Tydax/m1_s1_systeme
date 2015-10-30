@@ -50,6 +50,17 @@ void read_mbr();
 void save_mbr();
 
 /*
+ * Converts the volume and block numbers to cylinder and sector values.
+ *
+ * vol: the volume number
+ * block: the block number
+ * cyl: the resulting cylinder
+ * sect: the resulting sector
+ */
+void volume_to_sector(unsigned int vol, unsigned int block, unsigned int * cyl
+    unsigned int * sect);
+
+/*
  * Reads the number of blocks of the specified volumes and copies the data to
  * the buffer.
  *

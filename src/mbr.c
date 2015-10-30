@@ -120,14 +120,13 @@ void write_block(unsigned int vol, unsigned int nblock, unsigned char * buffer) 
  * vol: the volume to format
  */
 void format_vol(unsigned int vol) {
-    int cyl, sect, max_blocks;
-
+    struct vol_s volume;
 
     /* Checks if initialised */
     assert(mbr != NULL);
     assert(mbr->MBR_MAGIC_VALUE == MBR_MAGIC_VALUE);
 
-    volume_to_sector(vol, 0, &cyl, &sect);
-    max_blocks = mbr->mbr_vols[vol].vol_nb_blocks;
-    format_sector(cyl, sect, max_blocks, 0);
+    volume = mbr->mbr_vols[vol]
+    format_sector(volume.vol_first_cyl, volume.vol_first_sect, volume.vol_nb_blocks, 0);
+    mbr->mbr_nb_vols--;
 }
