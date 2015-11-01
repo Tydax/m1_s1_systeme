@@ -31,9 +31,9 @@ struct vol_s {
  * all information concerning the other volumes on the disk.
  */
 struct mbr_s {
+    int             mbr_magic; /* Magic number to check initialisation */
     unsigned int    mbr_nb_vols;      /* Number of volumes contained on the disk */
     struct vol_s    mbr_volumes[MBR_MAX_NB_VOL]; /* The stored volumes */
-    int             mbr_magic; /* Magic number to check initialisation */
 };
 
 /* Global variable defining the loaded MBR */
@@ -57,7 +57,7 @@ void save_mbr();
  * cyl: the resulting cylinder
  * sect: the resulting sector
  */
-void volume_to_sector(unsigned int vol, unsigned int block, unsigned int * cyl
+void volume_to_sector(unsigned int vol, unsigned int block, unsigned int * cyl,
     unsigned int * sect);
 
 /*

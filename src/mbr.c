@@ -3,6 +3,7 @@
 /* Standard libraries*/
 #include <assert.h>
 #include <memory.h>
+#include <stdlib.h>
 
 /* My libraries */
 #include <driver.h>
@@ -25,6 +26,7 @@ void read_mbr() {
     unsigned char * buffer;
 
     assert(mbr == NULL);
+    init_driver();
 
     /* Allocating memory for the buffer and global variable */
     mbr = (struct mbr_s *) malloc(sizeof(struct mbr_s));
@@ -63,16 +65,16 @@ void save_mbr() {
  * cyl: the resulting cylinder
  * sect: the resulting sector
  */
-void volume_to_sector(unsigned int vol, unsigned int block, unsigned int * cyl
+void volume_to_sector(unsigned int vol, unsigned int block, unsigned int * cyl,
     unsigned int * sect) {
     unsigned int new_sect;
 
     assert(vol < mbr->mbr_nb_vols);
-    assert(block < mbr->mbr_vols[vol].vol_nb_blocks);
+    assert(block < mbr->mbr_volumes[vol].vol_nb_blocks);
 
-    new_sect = mbr->mbr_vols[vol].vol_first_sect + block;
+    new_sect = mbr->mbr_volumes[vol].vol_first_sect + block;
 
-    *cyl = mbr->mbr_vols[vol].vol_first_cyl + (new_sect / HDA_MAXSECTOR);
+    *cyl = mbr->mbr_volumes[vol].vol_first_cyl + (new_sect / HDA_MAXSECTOR);
     *sect = new_sect % HDA_MAXSECTOR;
 }
 
@@ -85,11 +87,11 @@ void volume_to_sector(unsigned int vol, unsigned int block, unsigned int * cyl
  * buffer: the buffer to copy the data to
  */ 
 void read_block(unsigned int vol, unsigned int nblock, unsigned char * buffer) {
-    int cyl, sect;
+    unsigned int cyl, sect;
 
     /* Checks if initialised */
     assert(mbr != NULL);
-    assert(mbr->MBR_MAGIC_VALUE == MBR_MAGIC_VALUE);
+    assert(mbr->mbr_magic == MBR_MAGIC_VALUE);
 
     volume_to_sector(vol, nblock, &cyl, &sect);
     read_sector(cyl, sect, buffer);
@@ -104,11 +106,11 @@ void read_block(unsigned int vol, unsigned int nblock, unsigned char * buffer) {
  * buffer: the data to write
  */
 void write_block(unsigned int vol, unsigned int nblock, unsigned char * buffer) {
-    int cyl, sect;
+    unsigned int cyl, sect;
 
     /* Checks if initialised */
     assert(mbr != NULL);
-    assert(mbr->MBR_MAGIC_VALUE == MBR_MAGIC_VALUE);
+    assert(mbr->mbr_magic == MBR_MAGIC_VALUE);
 
     volume_to_sector(vol, nblock, &cyl, &sect);
     write_sector(cyl, sect, buffer);
@@ -124,9 +126,9 @@ void format_vol(unsigned int vol) {
 
     /* Checks if initialised */
     assert(mbr != NULL);
-    assert(mbr->MBR_MAGIC_VALUE == MBR_MAGIC_VALUE);
+    assert(mbr->mbr_magic == MBR_MAGIC_VALUE);
 
-    volume = mbr->mbr_vols[vol]
+    volume = mbr->mbr_volumes[vol];
     format_sector(volume.vol_first_cyl, volume.vol_first_sect, volume.vol_nb_blocks, 0);
     mbr->mbr_nb_vols--;
 }
