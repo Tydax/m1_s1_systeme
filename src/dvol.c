@@ -32,6 +32,11 @@ int main(int argc, char const *argv[]) {
     if (mbr->mbr_nb_vols == 0) {
         printf("No volume to display.\n");
     } else {
+        printf("** List of available volumes: **\n");
+        for (i = 0; i < mbr->mbr_nb_vols; i++) {
+            printf("%s\n", mbr->mbr_volumes[i].vol_name);
+        }
+
         nb_vol_to_disp = argc > 1 
                    ? argc - 1
                    : -1; /* To display all volumes */
@@ -48,7 +53,7 @@ int main(int argc, char const *argv[]) {
                 /* Browse through the array of volume names */
                 for (j = 1; j < argc; j++) {
                     if (!strcmp(vol.vol_name, argv[j])) {
-                        display_vol = 0;
+                        display_vol = 1;
                         break;
                     }
                 }
@@ -56,9 +61,9 @@ int main(int argc, char const *argv[]) {
 
             /* Display volume */
             if (display_vol) {
-                printf("****** %s ****** \n", vol.vol_name);
+                printf("\n****** %s ****** \n", vol.vol_name);
                 for (j = 0; j < vol.vol_nb_blocks; j++) {
-                    printf("** Block n°%d **\n", i);
+                    printf("** Block n°%d **\n", j);
                     read_block(i, j, buffer);
                     printf("%s\n", buffer);
                 }

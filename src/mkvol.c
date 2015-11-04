@@ -6,7 +6,7 @@
 #include <mbr.h>
 
 void usage(const char * prog) {
-    fprintf(stderr, "Usage: %s -s size -fc firstcylinder [-fs firstsector]\n", prog);
+    fprintf(stderr, "Usage: %s -s size -fc firstcylinder [-fs firstsector] [-n nameofvolume]\n", prog);
     exit(EXIT_FAILURE);
 }
 
@@ -91,8 +91,9 @@ int create_volume(unsigned int size, unsigned int cylinder, unsigned int sector,
 void display_all_volume_name() {
     int i;
 
+    printf("** List of available volumes: **\n");
     for (i = 0; i < mbr->mbr_nb_vols; ++i) {
-        printf("[%s]\n", mbr->mbr_volumes[i].vol_name);
+        printf("[%d][%s]\n", i, mbr->mbr_volumes[i].vol_name);
     }
 }
 
@@ -132,10 +133,8 @@ int main(int argc, char const *argv[]) {
     }
 
     /* Checking for idiotic input */
-    if (s < 0 || fc < 0 || fs < 0) {
-        fprintf(stderr, "Wrong input: the arguments can't be negative.\n");
-    } else if (fc == 0 && fs == 0) {
-        fprintf(stderr, "Wrong imput: cannot write on the Master Boot Record, use other values than (0, 0).\n");
+    if (fc == 0 && fs == 0) {
+        fprintf(stderr, "Wrong input: cannot write on the Master Boot Record, use other values than (0, 0).\n");
     }
 
     /* Default values */

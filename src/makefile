@@ -13,7 +13,7 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 LIBS = -L$(LIBDIR) -lhardware
 
-OUT = mkvol.out dvol.out
+OUT = mkvol.out dvol.out test.out
 
 all: $(OUT)
 
