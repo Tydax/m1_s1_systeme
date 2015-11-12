@@ -2,7 +2,7 @@
 #define __block_h__
 
 /*
- * Library offering an abstractation to manage blocks inside a volume.
+ * Library offering an abstraction to manage blocks inside a volume.
  */
 
 #define ENV_VOLUME_NAME "CURRENT_VOLUME"
