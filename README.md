@@ -9,6 +9,7 @@
 * Tristan CAMUS
 
 **/include :**
+* block.h
 * driver.h
 * hardware.h
 * mbr.h
@@ -18,18 +19,23 @@
 
 **/src :**
 * makefile
+* block.c
+* dfs.c
 * driver.c
-* dvol.c
+* fillvolume.c
 * mbr.c
-* mkvol.c
+* mknfs.c
 
 Le makefile peut générer deux programmes via ces commandes :
-* *make dvol.out*
-* *make mkvol.out*
+* *make dfs.out*
+* *make fillvolume.out*
+* *make mknfs.out*
 
-`mkvol.out -s size -fc firstcylinder [-fs sector] [-n nameofvolume]` creates a new volume with the specified parameters.
+`dfs.out` displays all the volumes on the disk, and for the current volume, displays the free space.
 
-`dvol.out [nameofvolumetodisplay [nameofvolumetodisplay_1]]` displays all blocks inside each volume of the disk. You can specify the name of the volume(s) you want to display.
+`fillvolume.out` fills the disk by allocating as many blocks as it can, then frees some, then re-allocates them. This program tests the superblock library.
+
+`mknfs.out` initialises a new current volume with its superblock on the disk (cylinder: 1, sector: 0, size: 50).
 
 Sinon il est possible de tous les générer via la commande *make all*.
 

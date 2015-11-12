@@ -1,10 +1,14 @@
 #include <block.h>
 
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include <driver.h>
 #include <mbr.h>
 
 
-struct superblock_s * superblock = NULL;
+struct superblock_s superblock;
 unsigned int current_vol;
 
 /*
@@ -14,8 +18,17 @@ void init_super() {
     struct grp_freeblocks_s fb;
     unsigned char buf[HDA_SECTORSIZE];
 
-    fb.size = mbr->mvr_volumes[current_vol].vol_nb_blocks - 1;
-    fb.suivants = 0;
+    fb.freeb_magic = FB_MAGIC_VALUE;
+    fb.freeb_size = mbr->mbr_volumes[current_vol].vol_nb_blocks - 1;
+    fb.freeb_next = 0;
+
+    superblock.superb_magic = SB_MAGIC_VALUE;
+    superblock.superb_serial = 1337;
+    memcpy(superblock.superb_name, mbr->mbr_volumes[current_vol].vol_name, SB_NAME_LENGTH);
+    superblock.superb_root = -1;
+    superblock.superb_nb_free_blocks = fb.freeb_size;
+    superblock.superb_first_grp_freeblocks = 1;
+
     /* Saves the super block to the disk */
     *((struct superblock_s *) buf) = superblock;
     write_block(current_vol, 0, buf);
@@ -35,22 +48,19 @@ void init_super() {
 int load_super(unsigned int vol) {
     unsigned char buf[HDA_SECTORSIZE];
 
-    superblock = (struct superblock_s *) malloc(sizeof(superblock_s));
-    if (!superblock) {
-        return -1;
-    }
-
     /* Load on disk */
     read_mbr();
     read_block(vol, 0, buf);
-    memcpy(superblock, buf, sizeof(superblock_s));
+    memcpy(&superblock, buf, sizeof(struct superblock_s));
 
     current_vol = vol;
 
     /* If not initialised, let's initialise it */
-    if (superblock->sb_magic != SB_MAGIC_VALUE) {
+    if (superblock.superb_magic != SB_MAGIC_VALUE) {
         init_super();
     }
+
+    return 0;
 }
 
 /*
@@ -60,7 +70,7 @@ int load_super(unsigned int vol) {
 void save_super() {
     unsigned char buf[HDA_SECTORSIZE];
 
-    memcpy(buf, superblock, sizeof(struct superblock_s));
+    memcpy(buf, &superblock, sizeof(struct superblock_s));
     write_block(current_vol, 0, buf);
     save_mbr();
 }
@@ -75,13 +85,30 @@ unsigned int new_block() {
     int res;
     unsigned char buf[HDA_SECTORSIZE];
 
-    if (superblock->sb_first_grp_freeblocks != 0) {
-        
+    assert(superblock.superb_magic == SB_MAGIC_VALUE);
+    
+    res = 0;
+    if (superblock.superb_first_grp_freeblocks != 0) {
+        read_block(current_vol, superblock.superb_first_grp_freeblocks, buf);
+        memcpy(&fb, buf, sizeof(struct grp_freeblocks_s));
+        assert(fb.freeb_magic == FB_MAGIC_VALUE);
+        res = superblock.superb_first_grp_freeblocks;
+        superblock.superb_nb_free_blocks--;
+
+        if (fb.freeb_size > 1) {
+            /* Update the size of the group of free blocks */
+            fb.freeb_size--;
+            /* Write the superblock to the next block */
+            superblock.superb_first_grp_freeblocks++;
+            memcpy(buf, &fb, sizeof(struct grp_freeblocks_s));
+            write_block(current_vol, superblock.superb_first_grp_freeblocks, buf);
+        } else {
+            /* Update next group of free blocks if this was the last block in this group */
+            superblock.superb_first_grp_freeblocks = fb.freeb_next;
+        }
     }
 
-    read_block(current_vol, superblock->sb_first_grp_freeblocks, buf);
-
-    res = -1;
+    return res;
 }
 
 /*
@@ -89,4 +116,19 @@ unsigned int new_block() {
  *
  * block: The index of the block to free.
   */
-void free_block(unsigned int block);
+void free_block(unsigned int block) {
+    struct grp_freeblocks_s fb;
+    unsigned char buf[HDA_SECTORSIZE];
+
+    assert(superblock.superb_magic == SB_MAGIC_VALUE);
+    assert(block != 0);
+
+    fb.freeb_magic = FB_MAGIC_VALUE;
+    fb.freeb_size = 1;
+    fb.freeb_next = superblock.superb_first_grp_freeblocks;
+    superblock.superb_first_grp_freeblocks = block;
+    superblock.superb_nb_free_blocks++;
+
+    memcpy(buf, &fb, sizeof(struct grp_freeblocks_s));
+    write_block(current_vol, block, buf);
+}

@@ -16,11 +16,22 @@ void empty_function() {
  */
 int init_driver() {
     int i;
+    char * env_value;
 
-    if (init_hardware("../hardware.ini") == 0) {
-        fprintf(stderr, "Hardware initialization failed\n");
-        return -1;
+    env_value = getenv(ENV_HW_CONFIG_PATH);
+    if (!env_value) {
+        if (init_hardware("../hardware.ini") == 0) {
+            fprintf(stderr, "Hardware initialization failed\n");
+            return -1;
+        }
+    } else {
+        if (init_hardware(env_value) == 0) {
+            fprintf(stderr, "Hardware initialization failed\n");
+            return -1;
+        }
     }
+
+
 
     /* Initialise IRQ functions to empty functions */
     for(i = 0; i < 16; i++) {

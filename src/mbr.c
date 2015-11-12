@@ -25,21 +25,22 @@ void init_mbr() {
 void read_mbr() {
     unsigned char * buffer;
 
-    assert(mbr == NULL);
-    init_driver();
+    if (mbr == NULL) {
+        init_driver();
 
-    /* Allocating memory for the buffer and global variable */
-    mbr = (struct mbr_s *) malloc(sizeof(struct mbr_s));
-    buffer = (unsigned char *) malloc(sizeof(unsigned char *) * HDA_SECTORSIZE);
-    
-    read_sector(0, 0, buffer);
-    memcpy(mbr, buffer, sizeof(struct mbr_s));
+        /* Allocating memory for the buffer and global variable */
+        mbr = (struct mbr_s *) malloc(sizeof(struct mbr_s));
+        buffer = (unsigned char *) malloc(sizeof(unsigned char *) * HDA_SECTORSIZE);
+        
+        read_sector(0, 0, buffer);
+        memcpy(mbr, buffer, sizeof(struct mbr_s));
 
-    if (mbr->mbr_magic != MBR_MAGIC_VALUE) {
-        init_mbr();
+        if (mbr->mbr_magic != MBR_MAGIC_VALUE) {
+            init_mbr();
+        }
+
+        free(buffer);
     }
-
-    free(buffer);
 }
 
 /*

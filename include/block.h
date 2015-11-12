@@ -5,9 +5,12 @@
  * Library offering an abstractation to manage blocks inside a volume.
  */
 
+#define ENV_VOLUME_NAME "CURRENT_VOLUME"
+
 #define SB_NAME_LENGTH 32
 #define SB_MAGIC_VALUE 0xDEADCACA
 
+#define FB_MAGIC_VALUE 0xDADD1D00
 /*
  * Structure describing the superblock contained in the volume
  * The superblock gives a description of the free blocks contained in the volume.
@@ -28,7 +31,7 @@ struct grp_freeblocks_s {
     unsigned int    freeb_next;
 };
 
-extern struct superblock_s * superblock;
+extern struct superblock_s superblock;
 extern unsigned int current_vol;
 
 /*
