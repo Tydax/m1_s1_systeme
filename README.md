@@ -1,8 +1,8 @@
 ##Architecture et conception des Systèmes d'Exploitation
 
-###TP n°7
+###TP n°8
 
-###Deuxième couche logicielle : gestion de volumes
+###Troisième couche logicielle, 2e partie : structure d’un fichier
 
 **Authors:**
 * Armand BOUR
@@ -12,6 +12,7 @@
 * block.h
 * driver.h
 * hardware.h
+* inode.h
 * mbr.h
 
 **/lib :**
@@ -23,20 +24,8 @@
 * dfs.c
 * driver.c
 * fillvolume.c
+* inode.c
 * mbr.c
 * mknfs.c
 
-Le makefile peut générer deux programmes via ces commandes :
-* *make dfs.out*
-* *make fillvolume.out*
-* *make mknfs.out*
-
-`dfs.out` displays all the volumes on the disk, and for the current volume, displays the free space.
-
-`fillvolume.out` fills the disk by allocating as many blocks as it can, then frees some, then re-allocates them. This program tests the superblock library.
-
-`mknfs.out` initialises a new current volume with its superblock on the disk (cylinder: 1, sector: 0, size: 50).
-
-Sinon il est possible de tous les générer via la commande *make all*.
-
-Pour utiliser le makefile, se placer dans le dossier /src.
+TP pas entièrement implémenté.
