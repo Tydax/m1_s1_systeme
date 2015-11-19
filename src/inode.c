@@ -65,7 +65,7 @@ int delete_inode(unsigned int inumber) {
     read_inode(inumber, &inode);
 
     /* Freeing direct blocks */
-    for (i = 0; i < INODE_NB_BLOCKS_DIRECT; i++) {
+    for (i = 0; i < INODE_NB_DIRECT_BLOCKS; i++) {
         if (inode.inode_direct[i]) {
             free_block(inode.inode_direct[i]);
         }
@@ -87,7 +87,7 @@ int delete_inode(unsigned int inumber) {
     if (inode.inode_double_indirect) {
         read_block(current_vol, inode.inode_double_indirect, buf);
 
-        for (i = 0; i < 2; i++) {
+        for (i = 0; i < INODE_NB_BLOCKS_PER_BLOCK; i++) {
             if (buf[i]) {
                 read_block(current_vol, buf[i], mouton);
                 for (j = 0; j < INODE_NB_BLOCKS_PER_BLOCK; j++)
@@ -102,4 +102,63 @@ int delete_inode(unsigned int inumber) {
     }
 
     free_block(inumber);
+}
+
+/*
+ * Fetches the corresponding number of block in the specified inode.
+ *
+ * inumber: the number of the inode
+ * fblock: the number of the block to fetch
+ * do_allocate: if the block does not exist, this defines whether it should be allocated
+ * or not (true to allocate, false to allocate)
+ *
+ * Returns the actual block of volume number.
+ */
+unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, bool_t do_allocate) {
+    struct inode_s inode;
+    unsigned char buff[HDA_SECTORSIZE]
+
+    read_inode(inumber, &inode);
+
+    /* Direct block */
+    if (fblock < INODE_NB_DIRECT_BLOCKS) {
+        if (!inode.directs[fblock]) {
+            if (!do_allocate) {
+                return 0;
+            } else {
+                /* Allocate new block for direct blocks */
+                inode.directs[fblock] = new_block();
+                write_inode(inumber, &inode);
+            }
+        }
+        return inode.inode_direct[fblock];
+    } else  {
+        fblock -= INODE_NB_DIRECT_BLOCKS;
+
+        /* Indirect block */
+        if (fblock < INODE_NB_BLOCKS_PER_BLOCK) {
+
+            /* Indirect block is not initialised */
+            if (!inode.inode_indirect) {
+                if (!do_allocate) {
+                    return 0;
+                } else {
+                    /* Allocate new block for indirect block */
+                    inode.inode_indirect = new_block();
+                    memset(buff, 0, HDA_SECTORSIZE);
+                    write_block(current_vol, inode.inode_indirect, buff);
+                    write_inode(inumber, &inode);
+                }
+
+            }   
+            read_block(current_vol, inode.inode_indirect, buff);
+
+            if (!buff[fblock]) {
+                buffer[fblock] = new_block();
+                write_block(current_vol, inode.inode_indirect, buff);
+                write_inode(inumber, &inode);
+            }
+            return buff[fblock];
+        }
+    }
 }

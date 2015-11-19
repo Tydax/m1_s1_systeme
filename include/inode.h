@@ -5,7 +5,7 @@
  * Library offering an implementation of inode.
  */
 
-#define INODE_NB_BLOCKS_DIRECT ((HDA_SECTORSIZE - sizeof(inode_type_e) - 3 * sizeof(unsigned int)) / sizeof(unsigned int));
+#define INODE_NB_DIRECT_BLOCKS ((HDA_SECTORSIZE - sizeof(inode_type_e) - 3 * sizeof(unsigned int)) / sizeof(unsigned int));
 #define INODE_NB_BLOCKS_PER_BLOCK (HDA_SECTORSIZE / sizeof(unsigned int));
 
 /* Enum representing the type of file */
@@ -52,5 +52,17 @@ unsigned int create_inode(enum inode_type_e type);
  * inumber: the inumber of the inode to free
  */
 int delete_inode(unsigned int inumber);
+
+/*
+ * Fetches the corresponding number of block in the specified inode.
+ *
+ * inumber: the number of the inode
+ * fblock: the number of the block to fetch
+ * do_allocate: if the block does not exist, this defines whether it should be allocated
+ * or not (true to allocate, false to allocate)
+ *
+ * Returns the actual block of volume number.
+ */
+unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, bool_t do_allocate);
 
 #endif
