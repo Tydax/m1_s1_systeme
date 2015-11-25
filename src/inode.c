@@ -1,10 +1,13 @@
 #include <inode.h>
 
+#include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include <block.h>
 #include <driver.h>
+#include <mbr.h>
 
 /*
  * Reads the inode at the specified inumber, and saves it inside the inode.
@@ -17,7 +20,7 @@ void read_inode(unsigned int inumber, struct inode_s * inode) {
 
     read_mbr();
     read_block(current_vol, inumber, buf);
-    memcpy(inode, buf, sizeof(inode_s));
+    memcpy(inode, buf, sizeof(struct inode_s));
 }
 
 /*
@@ -29,7 +32,7 @@ void read_inode(unsigned int inumber, struct inode_s * inode) {
 void write_inode(unsigned int inumber, struct inode_s * inode) {
     unsigned char buf[HDA_SECTORSIZE];
 
-    memcpy(buf, inode, sizeof(inode_s));
+    memcpy(buf, inode, sizeof(struct inode_s));
     write_block(current_vol, inumber, buf);
 }
 
@@ -48,6 +51,8 @@ unsigned int create_inode(enum inode_type_e type) {
     inumber = new_block();
     assert(inumber != 0);
     write_inode(inumber, &inode);
+
+    return inumber;
 }
 
 /*
@@ -102,6 +107,8 @@ int delete_inode(unsigned int inumber) {
     }
 
     free_block(inumber);
+
+    return 0;
 }
 
 /*
@@ -114,7 +121,7 @@ int delete_inode(unsigned int inumber) {
  *
  * Returns the actual block of volume number.
  */
-unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, bool_t do_allocate) {
+unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, char do_allocate) {
     struct inode_s inode;
     unsigned char buff[HDA_SECTORSIZE],
                   muton[HDA_SECTORSIZE]; /* I’m hilarious. */
@@ -124,12 +131,12 @@ unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, bool_t 
 
     /* Direct block */
     if (fblock < INODE_NB_DIRECT_BLOCKS) {
-        if (!inode.directs[fblock]) {
+        if (!inode.inode_direct[fblock]) {
             if (!do_allocate) {
                 return 0;
             } else {
                 /* Allocate new block for direct blocks */
-                inode.directs[fblock] = new_block();
+                inode.inode_direct[fblock] = new_block();
                 write_inode(inumber, &inode);
             }
         }
@@ -160,7 +167,7 @@ unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, bool_t 
                 if (!do_allocate) {
                     return 0;
                 } else {
-                    buffer[fblock] = new_block();
+                    buff[fblock] = new_block();
                     write_block(current_vol, inode.inode_indirect, buff);
                     write_inode(inumber, &inode);
                 }
@@ -180,7 +187,7 @@ unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, bool_t 
                         /* Allocate new block for double indirect block */
                         inode.inode_double_indirect = new_block();
                         memset(buff, 0, HDA_SECTORSIZE);
-                        write_block(current_vol, inode_double_indirect, buff);
+                        write_block(current_vol, inode.inode_double_indirect, buff);
                         write_inode(inumber, &inode);
                     }
                 }
@@ -209,7 +216,7 @@ unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, bool_t 
                     if (!do_allocate) {
                         return 0;
                     } else {
-                        /* Allocate new block Block referenced by indirect block referenced by double indirect block */
+                        /* Allocate new block referenced by indirect block referenced by double indirect block */
                         muton[ind] = new_block();
                         write_block(current_vol, buff[ind], muton);
                         write_inode(inumber, &inode);

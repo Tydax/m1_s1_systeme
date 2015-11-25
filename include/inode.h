@@ -1,12 +1,14 @@
 #ifndef __INODE_H__
 #define __INODE_H__
 
+#include <driver.h>
+
 /*
  * Library offering an implementation of inode.
  */
 
-#define INODE_NB_DIRECT_BLOCKS ((HDA_SECTORSIZE - sizeof(inode_type_e) - 3 * sizeof(unsigned int)) / sizeof(unsigned int));
-#define INODE_NB_BLOCKS_PER_BLOCK (HDA_SECTORSIZE / sizeof(unsigned int));
+#define INODE_NB_DIRECT_BLOCKS ((HDA_SECTORSIZE - sizeof(enum inode_type_e) - 3 * sizeof(unsigned int)) / sizeof(unsigned int))
+#define INODE_NB_BLOCKS_PER_BLOCK (HDA_SECTORSIZE / sizeof(unsigned int))
 
 /* Enum representing the type of file */
 enum inode_type_e {
@@ -17,7 +19,7 @@ enum inode_type_e {
 struct inode_s {
     enum inode_type_e   inode_type;
     unsigned int        inode_size;
-    unsigned int        inode_direct[INODE_NB_BLOCKS_DIRECTS];
+    unsigned int        inode_direct[INODE_NB_DIRECT_BLOCKS];
     unsigned int        inode_indirect;
     unsigned int        inode_double_indirect;
 };
@@ -63,6 +65,6 @@ int delete_inode(unsigned int inumber);
  *
  * Returns the actual block of volume number.
  */
-unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, bool_t do_allocate);
+unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, char do_allocate);
 
 #endif

@@ -11,6 +11,7 @@
 #define SB_MAGIC_VALUE 0xDEADCACA
 
 #define FB_MAGIC_VALUE 0xDADD1D00
+ 
 /*
  * Structure describing the superblock contained in the volume
  * The superblock gives a description of the free blocks contained in the volume.
