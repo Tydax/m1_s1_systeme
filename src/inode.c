@@ -116,7 +116,9 @@ int delete_inode(unsigned int inumber) {
  */
 unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, bool_t do_allocate) {
     struct inode_s inode;
-    unsigned char buff[HDA_SECTORSIZE]
+    unsigned char buff[HDA_SECTORSIZE],
+                  muton[HDA_SECTORSIZE]; /* I’m hilarious. */
+    unsigned int ind;
 
     read_inode(inumber, &inode);
 
@@ -132,10 +134,10 @@ unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, bool_t 
             }
         }
         return inode.inode_direct[fblock];
-    } else  {
+    } else {
+        /* Indirect block */
         fblock -= INODE_NB_DIRECT_BLOCKS;
 
-        /* Indirect block */
         if (fblock < INODE_NB_BLOCKS_PER_BLOCK) {
 
             /* Indirect block is not initialised */
@@ -153,12 +155,71 @@ unsigned int vblock_of_fblock(unsigned int inumber, unsigned int fblock, bool_t 
             }   
             read_block(current_vol, inode.inode_indirect, buff);
 
+            /* Block referenced in indirect block is not initiliased */
             if (!buff[fblock]) {
-                buffer[fblock] = new_block();
-                write_block(current_vol, inode.inode_indirect, buff);
-                write_inode(inumber, &inode);
+                if (!do_allocate) {
+                    return 0;
+                } else {
+                    buffer[fblock] = new_block();
+                    write_block(current_vol, inode.inode_indirect, buff);
+                    write_inode(inumber, &inode);
+                }
             }
+            
             return buff[fblock];
+        } else {
+            /* Double indirect block */
+            fblock -= INODE_NB_BLOCKS_PER_BLOCK;
+
+            if (fblock < INODE_NB_BLOCKS_PER_BLOCK) {
+                /* Double indirect block is not initialised */
+                if (!inode.inode_double_indirect) {
+                    if (!do_allocate) {
+                        return 0;
+                    } else {
+                        /* Allocate new block for double indirect block */
+                        inode.inode_double_indirect = new_block();
+                        memset(buff, 0, HDA_SECTORSIZE);
+                        write_block(current_vol, inode_double_indirect, buff);
+                        write_inode(inumber, &inode);
+                    }
+                }
+
+                read_block(current_vol, inode.inode_double_indirect, buff);
+                
+                ind = fblock / INODE_NB_BLOCKS_PER_BLOCK;
+                /* Indirect block referenced by double indirect block is not initialised */
+                if (!buff[ind]) {
+                    if (!do_allocate) {
+                        return 0;
+                    } else {
+                        /* Allocate new block for indirect block referenced by double indirect block */
+                        buff[ind] = new_block();
+                        memset(muton, 0, HDA_SECTORSIZE);
+                        write_block(current_vol, buff[ind], muton);
+                        write_inode(inumber, &inode);
+                    }
+                }
+
+                read_block(current_vol, buff[ind], muton);
+                ind = fblock % INODE_NB_BLOCKS_PER_BLOCK;
+
+                /* Block referenced by indirect block referenced by double indirect block is not initialised */
+                if (!muton[ind]) {
+                    if (!do_allocate) {
+                        return 0;
+                    } else {
+                        /* Allocate new block Block referenced by indirect block referenced by double indirect block */
+                        muton[ind] = new_block();
+                        write_block(current_vol, buff[ind], muton);
+                        write_inode(inumber, &inode);
+                    }
+                }
+
+                return muton[ind];
+            }
         }
     }
+
+    return 0;
 }
