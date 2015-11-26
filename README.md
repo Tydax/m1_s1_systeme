@@ -37,7 +37,7 @@
 
 `dvol.out [nameofvolumetodisplay [nameofvolumetodisplay_1]]` affiche tous les blocs de données sur chaque volume du disque. Il est possible de spécifier le nom du ou des volumes que l'on souhaite afficher.
 
-`fillinode.out` crée un inode, et alloue le plus de blocs possibles via celui-ci, puis vérifie que tous les blocs sont bien alloués. Ce programme teste la bibliothèque *inode*.
+`fillinode.out` crée un inode, et alloue le plus de blocs possibles via celui-ci, puis vérifie que tous les blocs sont bien alloués. Ce programme teste la bibliothèque *inode*. (non fonctionnel)
 
 `fillvolume.out` remplit le disque en allouant le plus de blocs possibles, avant d'en libérer certains, puis les réalloue. Ce programme teste la bibliothèque *superblock*.
 
@@ -46,5 +46,7 @@
 `mknfs.out` initialise un nouveau volume courant avec son superblock sur le disque(cylinder: 1, sector: 0, size: 180).
 
 `mkvol.out -s size -fc firstcylinder [-fs sector] [-n nameofvolume]` crée un nouveau volume avec les paramètres spécifiés.
+
+En se plaçant dans le dossier **/src**, Chaque programme peut être compilé via la commande `make` suivi du nom du programme.
 
 Sinon il est possible de tous les générer via la commande `make all`, ce qui nettoyera également les .o.

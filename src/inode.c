@@ -32,6 +32,7 @@ void read_inode(unsigned int inumber, struct inode_s * inode) {
 void write_inode(unsigned int inumber, struct inode_s * inode) {
     unsigned char buf[HDA_SECTORSIZE];
 
+    memset(buf, 0, HDA_SECTORSIZE);
     memcpy(buf, inode, sizeof(struct inode_s));
     write_block(current_vol, inumber, buf);
 }
