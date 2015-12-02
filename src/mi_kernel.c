@@ -1,22 +1,58 @@
-#define MMU_IRQ         13
-#define MMU_FAULT_ADDR  0xCD
-#define N               254
+#include <mi_kernel.h>
 
-/* Structure used to store the TLB entries */
-union tlb_entry_u {
-    int tlb;
-    struct tlb_entry_s {
-        unsigned tlb_rfu        : 8;
-        unsigned tlb_virpage    : 12;
-        unsigned tlb_physpage   : 8;
-        unsigned tlb_exec       : 1;
-        unsigned tlb_write      : 1;
-        unsigned tlb_read       : 1;
-        unsigned tlb_used       : 1;
-    } tlb_s;
-}
+#include <assert.h>
+#include <memory.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <hardware.h>
+#include <mi_syscall.h>
+#include <mi_user.h>
 
 static int current_process;
+
+static int
+vpage_of_vaddr(unsigned vaddr) {
+    return (vaddr >> 12) & ((1 << 12) - 1);
+}
+
+static int
+ppage_of_vaddr(int process, unsigned vaddr)
+{
+    int vpage;
+
+    if ( (int) virtual_memory > vaddr || (int) virtual_memory + VM_SIZE + 1
+        || vaddr == 0 || vaddr > N/2) {
+        return -1;
+    }
+
+    vpage = vpage_of_vaddr(vaddr);
+    return vpage + (N/2 * process) + 1;
+}
+
+void
+mmuhandler()
+{
+    union tlb_entry_u tlb_entry;
+    unsigned int vaddr, ppage;
+
+    vaddr = _in(MMU_FAULT_ADDR);
+    ppage = ppage_of_vaddr(current_process, vaddr);
+
+    if (ppage == -1) {
+        fprintf(stderr, "Erreur de segmentation sur ppage\n");
+        exit(EXIT_FAILURE);
+    }
+
+    tlb_entry.tlb_s.tlb_virpage = vpage_of_vaddr(vaddr);
+    tlb_entry.tlb_s.tlb_physpage = ppage_of_vaddr(current_process, ppage);
+    tlb_entry.tlb_s.tlb_exec = 1;
+    tlb_entry.tlb_s.tlb_write = 1;
+    tlb_entry.tlb_s.tlb_read = 1;
+    tlb_entry.tlb_s.tlb_used = 1;
+
+    _out(TLB_ADD_ENTRY, tlb_entry.tlb);
+}
 
 void 
 switch_to_process0(void) 
@@ -38,7 +74,7 @@ main(int argc, char **argv)
     void *ptr;
     int res;
 
-    ... /* init_hardware(); */
+    assert(init_hardware("hardware.ini") != 0);
     IRQVECTOR[SYSCALL_SWTCH_0] = switch_to_process0;
     IRQVECTOR[SYSCALL_SWTCH_1] = switch_to_process1;
     _mask(0x1001);
@@ -55,5 +91,5 @@ main(int argc, char **argv)
     printf("Resultat du processus 0 : %d\n",res);
     _int(SYSCALL_SWTCH_1);
     res = sum(ptr);
-    printf("Resultat processus 1 : %d\n",res);
+    printf("Resultat du processus 1 : %d\n",res);
 }

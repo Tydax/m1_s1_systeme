@@ -1,3 +1,7 @@
+#include <mi_user.h>
+
+#include <mi_kernel.h>
+
 int 
 sum(void *ptr) 
 {
