@@ -9,23 +9,17 @@
 * Tristan CAMUS
 
 **/include :**
-* block.h
-* driver.h
 * hardware.h
-* inode.h
-* mbr.h
+* mi_kernel.h
+* mi_syscall.h
+* mi_user.h
 
 **/lib :**
 * libhardware.a
 
 **/src :**
 * makefile
-* block.c
-* dfs.c
-* driver.c
-* fillvolume.c
-* inode.c
-* mbr.c
-* mknfs.c
+* mi_kernel.c
+* mi_user.c
 
-TP pas entièrement implémenté.
+Une fois placé dans le dossier src, `make all` afin de produire le programme `mi_kernel.out`.

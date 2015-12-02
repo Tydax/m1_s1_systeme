@@ -21,12 +21,13 @@ ppage_of_vaddr(int process, unsigned vaddr)
 {
     int vpage;
 
-    if ( (int) virtual_memory > vaddr || (int) virtual_memory + VM_SIZE + 1
-        || vaddr == 0 || vaddr > N/2) {
+    vpage = vpage_of_vaddr(vaddr);
+
+    if ( (int) virtual_memory > vaddr || (int) virtual_memory + VM_SIZE + 1 < vaddr
+        || vpage >= N/2) {
         return -1;
     }
 
-    vpage = vpage_of_vaddr(vaddr);
     return vpage + (N/2 * process) + 1;
 }
 
@@ -74,7 +75,8 @@ main(int argc, char **argv)
     void *ptr;
     int res;
 
-    assert(init_hardware("hardware.ini") != 0);
+    assert(init_hardware("../hardware.ini") != 0);
+    IRQVECTOR[MMU_IRQ] = mmuhandler;
     IRQVECTOR[SYSCALL_SWTCH_0] = switch_to_process0;
     IRQVECTOR[SYSCALL_SWTCH_1] = switch_to_process1;
     _mask(0x1001);
@@ -92,4 +94,6 @@ main(int argc, char **argv)
     _int(SYSCALL_SWTCH_1);
     res = sum(ptr);
     printf("Resultat du processus 1 : %d\n",res);
+
+    return EXIT_SUCCESS;
 }
