@@ -5,10 +5,10 @@ LIBDIR = ../lib
 CC=gcc
 CFLAGS=-I$(IDIR) -ansi -pedantic -m32 -Wall -g -pthread
 
-_DEPS = hardware.h mi_user.h mi_kernel.h
+_DEPS = hardware.h kernel.h matrix.h oracle.h swap.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = mi_user.o
+_OBJ = swap.o matrix.o oracle.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 LIBS = -L$(LIBDIR) -lhardware
