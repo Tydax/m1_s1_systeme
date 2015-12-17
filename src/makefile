@@ -13,7 +13,7 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 LIBS = -L$(LIBDIR) -lhardware
 
-OUT = fillvolume.out mkvol.out mknfs.out dfs.out
+OUT = fillvolume.out mknfs.out dfs.out
 
 all: $(OUT)
 
