@@ -4,7 +4,7 @@
 
 ###Isolation mémoire du processus
 
-**Authors:**
+**Auteurs :**
 * Armand BOUR
 * Tristan CAMUS
 

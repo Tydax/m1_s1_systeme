@@ -1,10 +1,8 @@
-#Architecture et conception des Systèmes d'Exploitation
+## Architecture et conception des Systèmes d'Exploitation
+### TP n°5
+### Première couche logicielle : accès au matériel
 
-###TP n°5
-
-###Première couche logicielle : accès au matériel
-
-**Authors:**
+**Auteurs :**
 * Armand BOUR
 * Tristan CAMUS
 
@@ -22,9 +20,9 @@
 * frmt.c
 
 Le makefile peut générer deux programmes via ces commandes :
-* *make dmps.out*
-* *make frmt.out*
+* `make dmps.out`
+* `make frmt.out`
 
-Sinon il est possible de tous les générer via la commande *make all*.
+Sinon il est possible de tous les générer via la commande `make all`.
 
-Pour utiliser le makefile, se placer dans le dossier /src.
+Pour utiliser le makefile, se placer dans le dossier **/src**.

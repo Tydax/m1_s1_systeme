@@ -4,7 +4,7 @@
 
 ###Mémoire virtuelle et swap disque
 
-**Authors:**
+**Auteurs :**
 * Armand BOUR
 * Tristan CAMUS
 
